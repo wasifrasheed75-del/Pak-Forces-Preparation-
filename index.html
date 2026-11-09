@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0, user-scalable=yes">
+<meta name="theme-color" content="#063f35">
+<title>Pak Forces Preparation</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f8f6;color:#17352f}
+header{background:#063f35;color:#fff;padding:18px 16px}.brand{font-size:22px;font-weight:700}.sub{font-size:13px;margin-top:6px}.arabicLine{font-family:Georgia,"Times New Roman",serif;font-size:18px;line-height:1.6;text-align:center;direction:rtl;color:#f5cf55;margin:0 0 3px;font-weight:600}
+main{max-width:720px;margin:auto;padding:16px 16px 90px}.hero{background:linear-gradient(135deg,#08775f,#063f35);color:#fff;border-radius:22px;padding:20px;margin-bottom:16px}.gold{color:#f5cf55;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card,.tile{min-width:0;overflow-wrap:anywhere;background:#fff;border-radius:18px;padding:17px;box-shadow:0 3px 15px #0001;margin-bottom:12px}.tile{cursor:pointer}.tile:active{transform:scale(.98)}.emoji{font-size:32px}
+button{border:0;border-radius:10px;padding:11px 14px;background:#08775f;color:#fff;font-weight:700;margin:4px;cursor:pointer}button.secondary{background:#e4eeeb;color:#17352f}button.danger{background:#d83a35}
+input,select{width:100%;padding:12px;border:1px solid #c9d8d4;border-radius:10px;margin:5px 0 12px;font-size:16px}
+.option{display:block;width:100%;text-align:left;background:#fff;color:#17352f;border:2px solid #d5e2df;margin:8px 0}.option.correct{background:#dff6e9;color:#11683e;border-color:#1aa35f}.option.wrong{background:#ffe2df;color:#a5201c;border-color:#e33b36}
+.small{color:#70807c;font-size:13px}.item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:1px solid #dbe6e3;border-radius:12px;padding:11px;margin:8px 0}.score{text-align:center;font-size:46px;font-weight:800;color:#08775f}
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:7px;z-index:20}nav button{background:#fff;color:#17352f;font-size:12px}
+#viewer{display:none;position:fixed;inset:0;width:100%;height:100%;height:100dvh;background:#777;z-index:50;padding:0;text-align:center;overflow-x:auto;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}#viewerTop{min-height:58px;background:#063f35;color:#fff;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:4px;position:sticky;top:0;left:0;right:0;z-index:5}#viewerTitle{min-width:0;max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}#viewerActions{display:flex;align-items:center;gap:2px;flex-shrink:0}#viewerActions button{margin:1px;padding:9px 10px;min-width:34px}#pdfStatus{background:#f3f8f6;color:#17352f;padding:8px;font-weight:700;position:sticky;top:58px;z-index:4}#submitMockBar button{box-shadow:0 2px 8px #0002}#pdfPages{width:100%;min-width:0;max-width:none;padding:6px 0 90px;display:flex;flex-direction:column;align-items:stretch;gap:8px;overflow:visible;-webkit-overflow-scrolling:touch}#pdfPages>div{flex-shrink:0}.pdfPage{background:#fff;box-shadow:0 2px 10px #0005;width:100%;max-width:100%;height:auto;display:block;object-fit:contain}#pdfLoading{padding:25px;color:#fff;font-weight:700}#submitMockBar{position:sticky;bottom:0}#app{min-width:0}body{overflow-x:hidden}
+#startup{display:none;position:fixed;inset:0;background:#f3f8f6;z-index:100;align-items:center;justify-content:center;padding:18px}.startupCard{background:#fff;border-radius:22px;padding:22px;width:min(520px,100%);box-shadow:0 8px 30px #0002}.startupCard h2{margin-top:0}
+.stack{display:flex;flex-direction:column;gap:8px}.empty{padding:8px 0}.fileRow{margin:0}
+</style>
+</head>
+<body>
+<header><div class="brand">Pak Forces Preparation</div><div class="arabicLine" dir="rtl">وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ</div><div class="sub">Created By Wasif Rasheed • 03369113955</div></header>
+<main id="app"></main>
+<nav>
+<button onclick="home()">⌂<br>Home</button>
+<button onclick="tests()">✓<br>Tests</button>
+<button onclick="files()">📚<br>Files</button>
+<button onclick="adminLogin()">⚙<br>Admin</button>
+</nav>
+<div id="viewer">
+<div id="viewerTop"><b id="viewerTitle">PDF</b><span id="viewerActions"><button id="pdfZoomOut" style="display:none" onclick="PF_ZOOM(-1)">−</button><button id="pdfZoomReset" style="display:none" onclick="PF_ZOOM(0)">100%</button><button id="pdfZoomIn" style="display:none" onclick="PF_ZOOM(1)">+</button><button onclick="closeViewer()">Close</button></span></div>
+<div id="pdfStatus">Preparing PDF…</div>
+<div id="pdfPages"><div id="pdfLoading">PDF pages will appear here…</div></div>
+<div id="submitMockBar" style="display:none;position:sticky;bottom:0;background:#fff;padding:12px;border-top:1px solid #ddd;z-index:6;text-align:center"><button id="submitMockBtn" style="display:none;background:#f5cf55;color:#17352f;min-width:180px;font-size:17px" disabled onclick="submitUploadedMockResult()">Submit Test</button></div>
+</div>
+<div id="startup"><div class="startupCard"><h2>Student Registration</h2><p class="small">Enter your name and phone number before using the app. This information is saved on this device.</p><label>Student Name<input id="startupName" placeholder="Full Name" autocomplete="name"></label><label>Student Number<input id="startupStudentNumber" placeholder="Student Number" inputmode="numeric"></label><label>Phone Number<input id="startupPhone" placeholder="03XXXXXXXXX" inputmode="tel"></label><button onclick="saveStartupProfile()">Continue</button></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+var ADMIN_PASSWORD="wasif1122";
+var forces={
+ navycs:{name:"Pakistan Navy Civilian & Sailor",icon:"⚓"},
+ pn:{name:"PN Cadet",icon:"🚢"},
+ pma:{name:"PMA",icon:"🏅"},
+ air:{name:"Air Force",icon:"✈️"},
+ police:{name:"KPK Police",icon:"👮"}
+};
+ window.PF_FORCES=forces;
+var questions=[
+ {q:"What is the capital of Pakistan?",o:["Lahore","Islamabad","Karachi","Peshawar"],a:1},
+ {q:"Pakistan became independent in:",o:["1940","1945","1947","1956"],a:2},
+ {q:"Who is known as Quaid-e-Azam?",o:["Allama Iqbal","Muhammad Ali Jinnah","Liaquat Ali Khan","Sir Syed"],a:1},
+ {q:"Pakistan's national language is:",o:["Punjabi","Pashto","Urdu","Sindhi"],a:2},
+ {q:"Which force protects Pakistan's sea borders?",o:["Army","Navy","Air Force","Police"],a:1},
+ {q:"Which force primarily protects Pakistan's airspace?",o:["Navy","Army","Air Force","Police"],a:2},
+ {q:"PMA is associated with:",o:["Army","Navy","Air Force","Police"],a:0},
+ {q:"KPK stands for:",o:["Khyber Pakhtunkhwa","Kashmir Pakistan","Karachi Provincial Kingdom","None"],a:0}
+];
+
+/* ===== PN CADET PDF-BASED MOCK TESTS ===== */
+var PN_CADET_MOCKS=[{"id":"1203","name":"PN Cadet — 1203 Mock Test","source":"PN_Cadet_Test_1203_Wasif.pdf","questions":[{"q":"The wave nature of an electron is illustrated by its:","o":["Photoelectric effect","Compton effect","Penetrating effect","Diffraction effect"],"a":3},{"q":"The power of the objective and eyepiece of a telescope are 0.5 D and 10 D respectively. The magnifying power of the telescope is:","o":["0.5","10","20","0.05"],"a":2},{"q":"Hind refers to the:","o":["Back part","Front part","Middle part","Upper part"],"a":0},{"q":"Choose the correct expression for Coulomb's law:","o":["F = 1/k q₁q₂ / r²","F = kq₁q₂ / r²","F = 4π q₁q₂ / r²","F = kr² q₁q₂"],"a":1},{"q":"The property of a moving object by which it exerts force on the object trying to stop it is:","o":["Inertia of the body","Quantity of motion of body","Acceleration of body","All of these"],"a":0},{"q":"Drug addiction ___ the mood and behavior of addicts.","o":["Alters","Altering","Altered","To alter"],"a":0},{"q":"Fake means:","o":["Real","Unreal","Copy","Attend"],"a":1},{"q":"We can hear sound around the corner but cannot see light because of:","o":["Interference","Diffraction","Polarization","Dispersion"],"a":1},{"q":"The number of loops in stationary waves depends upon:","o":["Amplitude","Wavelength","Speed of wave","Frequency of waves"],"a":1},{"q":"The more he learns ___ he serves.","o":["Better","The better","Best","Most"],"a":1},{"q":"Would you please ___ make a noise?","o":["Not","Do not","Don't","No"],"a":0},{"q":"At constant temperature, when the volume of a given mass of gas is doubled, its density becomes:","o":["Double","One fourth","Four times","Half"],"a":3},{"q":"The process which is performed quickly is:","o":["Isobaric process","Adiabatic process","Isothermal process","Isochoric process"],"a":1},{"q":"Mammals are:","o":["Animals that give birth","Animals that lay eggs","Animals that do not reproduce","Animals that fly"],"a":0},{"q":"The quantity which specifies the displacement as well as the direction of motion in simple harmonic motion is:","o":["Phase angle","Angular frequency","Path difference","None of these"],"a":0},{"q":"The dot product of force and velocity is equal to:","o":["Power","Impulse","Couple","Momentum"],"a":0},{"q":"\"Gasped\" means:","o":["Breathe with open mouth","Breathe with closed mouth","Breathe the last breath","Breathe comfortably"],"a":0},{"q":"Synonym of \"Tribute\" is:","o":["Homage","Abasement","Reluctance","Fidelity"],"a":0},{"q":"The line is busy; someone ___ using the telephone.","o":["Must","Must be","Is","Will be"],"a":1},{"q":"Aslam and Akram are painters. ___ is the better.","o":["The latter","The letter","The later","The latest"],"a":0},{"q":"Heavy rains ___ the sea level.","o":["Rose","Raised","Raising","Rising"],"a":1},{"q":"When light enters from air to glass, it suffers a change in:","o":["Frequency","Speed","Wavelength","Wavelength and speed"],"a":3},{"q":"Synonym of \"Brink\" is:","o":["Edge","Top","Peak","Slope"],"a":0},{"q":"He had scarcely crossed the road ___ the bus came.","o":["Then","When","Before","After"],"a":1},{"q":"The property of light that does not change with the nature of medium is:","o":["Frequency of light","Wavelength of light","Speed of light","All of these"],"a":0},{"q":"Synonym of \"Squeeze\" is:","o":["Wring","Rinse","Shrink","Expand"],"a":0},{"q":"He wanted to make him ___ easy.","o":["Write","Wrote","Writing","To write"],"a":3},{"q":"\"Feats\" means:","o":["Tricks","Efforts","Strength","Skills"],"a":0},{"q":"A bomber drops a bomb when it is vertically above the target. It misses the target because of:","o":["Vertical component of velocity of bomber","Force of gravity","Acceleration of the bomber","Horizontal component of velocity of bomber"],"a":3},{"q":"They had hardly reached their shelter ___ it rained.","o":["Then","When","Before","After"],"a":1},{"q":"___ do you visit this place?","o":["How often","How oftenly","How frequent","How frequency"],"a":0},{"q":"Synonym of \"Suggestion\" is:","o":["Proposal","Advice","Order","Request"],"a":1},{"q":"Synonym of \"Farewell\" is:","o":["Reception","Goodbye","Welfare","Welcome"],"a":1},{"q":"Nadeem is very soon going to be:","o":["Employ","Employed","To employ","Employing"],"a":1}]},{"id":"1603","name":"PN Cadet — 1603 Mock Test","source":"PN_Cadet_Test_1603_Wasif.pdf","questions":[{"q":"The word \"Advent\" means:","o":["Arrival","Height","Acceptance","Expansion"],"a":0},{"q":"\"In lieu of\" means:","o":["In return","Returning from","As an alternative","Leaving the ground"],"a":2},{"q":"\"Abhor\" means:","o":["Detest","Accept","Admire","Follow"],"a":0},{"q":"\"Crawl\" means:","o":["Creep on the ground","Walk fast","Run","Jump"],"a":0},{"q":"She is not entitled ___ the prize.","o":["To","Of","With","From"],"a":0},{"q":"The angle subtended at the center of a sphere by its surface is equal to:","o":["4/3π radian","4/3π² radian","4 steradian","2 radian"],"a":2},{"q":"The multiplication of 7.635 and 4.81 is:","o":["36.72435","35.72435","36.27435","34.72435"],"a":0},{"q":"If the resultant of two equal forces is 2F, the angle between them is:","o":["0°","60°","90°","120°"],"a":0},{"q":"If the velocity of a body becomes half, the kinetic energy of the body will become:","o":["One fourth","One half","Double","Four times"],"a":0},{"q":"A 60 kg man in a lift which is moving upward with an acceleration of 4.9 m/s² will have an apparent weight of:","o":["588 N","686 N","735 N","882 N"],"a":3},{"q":"The apparent weight of a pilot when diving down in a jet plane with an acceleration of 9.8 m/s² will become:","o":["Equal to actual weight","Double the weight","Half of the weight","Zero"],"a":3},{"q":"The geostationary satellites are:","o":["Stationary with respect to earth","Rotating with speed of earth","Rotating very fast","Rotating very slowly"],"a":0},{"q":"ML⁻¹T⁻¹ are the dimensions of:","o":["Angular momentum","Power","Impulse","Viscosity"],"a":3},{"q":"Largest island in the world is:","o":["Greenland","Madagascar","Borneo","Iceland"],"a":0},{"q":"Old name of Saudi Arabia was:","o":["Hijaz and Najd","Persia","Arabia Felix","Ottoman"],"a":0},{"q":"The formula of Force is:","o":["F = ma","F = mv","F = m/a","F = a/m"],"a":0},{"q":"Ahmad is ___ the station.","o":["In","On","At","To"],"a":2},{"q":"Which word is a city?","o":["Country","City","Plant","River"],"a":1},{"q":"Currency of Saudi Arabia is:","o":["Riyal","Dinar","Dirham","Pound"],"a":0},{"q":"Statue of Liberty is located in:","o":["UK","USA","France","Canada"],"a":1},{"q":"Number of non-permanent members in the United Nations Security Council is:","o":["5","8","10","12"],"a":2}]},{"id":"1703","name":"PN Cadet — 1703 Mock Test","source":"PN_Cadet_Test_1703_Wasif.pdf","questions":[{"q":"The physical quantity which produces angular acceleration in a body is:","o":["Force","Moment of inertia","Impulse","Torque"],"a":3},{"q":"Largest desert of Pakistan is:","o":["Thar Desert","Cholistan Desert","Thal Desert","Kharan Desert"],"a":0},{"q":"The sun rises ___ the east.","o":["At","On","In","From"],"a":2},{"q":"Synonym of arrogant is:","o":["Proud","Conceited","Honest","Brave"],"a":1},{"q":"i × (k × j) is equal to:","o":["-1","1","0","2"],"a":0},{"q":"Three vectors of equal magnitude directed along the sides of an equilateral triangle have resultant:","o":["Zero","One","Two","Three"],"a":0},{"q":"Bodies falling freely under gravity are examples of:","o":["Average acceleration","Uniform acceleration","Variable acceleration","Uniform velocity"],"a":1},{"q":"SI unit of electric current is:","o":["Volt","Ampere","Ohm","Watt"],"a":1},{"q":"The point at which an applied force produces linear motion but no rotation is:","o":["Midpoint","Center of gravity","Optical center","Pole"],"a":1},{"q":"It was kind ___ you to help.","o":["To","Of","With","For"],"a":1},{"q":"Synonym of dormant is:","o":["Active","Sleeping","Hibernating","Awake"],"a":2},{"q":"How many months have 31 days in a year?","o":["5","6","7","8"],"a":2},{"q":"Escape velocity from the earth gravitational field depends upon:","o":["Rotation of earth","Mass of body","Radius of earth","Mass of earth"],"a":3},{"q":"Which country has the Statue of Liberty?","o":["USA","UK","Germany","Italy"],"a":0},{"q":"SI unit of resistance is:","o":["Volt","Ampere","Ohm","Watt"],"a":2},{"q":"Approximate value of drift velocity is:","o":["10⁻¹","10⁻²","10⁻³","10⁻⁴"],"a":2},{"q":"Crystalline solids have the property of:","o":["Regular arrangement","Covalent bonding","Some defects","All of these"],"a":3},{"q":"A man throws a ball vertically upward in an accelerating train. The ball will fall:","o":["Behind him","In his hand","In front of him","Away from him"],"a":0},{"q":"Synonym of puerile is:","o":["Mature","Immature","Strong","Honest"],"a":1},{"q":"Number of weeks in one year is:","o":["50","51","52","53"],"a":2},{"q":"sin 315° is equal to:","o":["√2 / 2","-√2 / 2","1","-1"],"a":1},{"q":"Badshahi Mosque is located in:","o":["Karachi","Lahore","Islamabad","Multan"],"a":1},{"q":"SI unit of power is:","o":["Joule","Watt","Volt","Newton"],"a":1},{"q":"Salah is different ___ other girls.","o":["With","From","To","Of"],"a":1}]},{"id":"simple_format","name":"PN Cadet — Simple Format Mock Test","source":"PN_Cadet_Test_Simple_Format.pdf","questions":[{"q":"Magnetic lines are also called:","o":["Lines of force","Magnetic paths","Electric lines","Energy lines"],"a":0},{"q":"Currency of Bangladesh is:","o":["Rupee","Taka","Dinar","Rial"],"a":1},{"q":"SI unit of resistivity is:","o":["Ohm","Ohm-meter","Meter","Watt"],"a":1},{"q":"Hand is to Arm as Foot is to:","o":["Knee","Leg","Eyes","Toe"],"a":1},{"q":"Who is the writer of Harry Potter?","o":["J.R.R Tolkien","J.K Rowling","Charles Dickens","William Shakespeare"],"a":1},{"q":"The wheel of the truck presses the road.","o":["On","Against","Over","At"],"a":1},{"q":"SI unit of force is:","o":["Joule","Newton","Watt","Pascal"],"a":1},{"q":"Manchar Lake is located in which province of Pakistan?","o":["Punjab","Sindh","Balochistan","KPK"],"a":1},{"q":"One third of 120 is:","o":["30","35","40","45"],"a":2},{"q":"Currency of Egypt is:","o":["Dinar","Dirham","Egyptian Pound","Riyal"],"a":2},{"q":"Ohm's Law formula is:","o":["V = IR","V = I/R","R = VI","I = VR"],"a":0},{"q":"SI unit of length is:","o":["Meter","Kilometer","Yard","Mile"],"a":0},{"q":"Oldest city of Pakistan is:","o":["Lahore","Multan","Karachi","Peshawar"],"a":1},{"q":"I am proud ________ my brother.","o":["At","On","Of","With"],"a":2},{"q":"Statue of Liberty is located in:","o":["Washington","New York","Chicago","Boston"],"a":1},{"q":"Current Railway Minister of Pakistan is:","o":["Sheikh Rasheed","Khawaja Saad Rafique","Hanif Abbasi","Shahid Ashraf"],"a":2},{"q":"Synonym of \"Reformation\" is:","o":["Change","Punishment","Decline","Destruction"],"a":0},{"q":"Usman was broken ________ from his old friends.","o":["Off","Away","On","Out"],"a":1},{"q":"\"Saifullah\" is the title of:","o":["Hazrat Umar (RA)","Hazrat Khalid bin Waleed (RA)","Hazrat Ali (RA)","Hazrat Abu Bakr (RA)"],"a":1},{"q":"World Health Organization headquarters is in:","o":["Stamp / Paris","Geneva","London","New York"],"a":1},{"q":"Separation of Bengal took place in:","o":["1905","1911","1947","1857"],"a":0}]},{"id":"2403","name":"PN Cadet — 2403 Mock Test","source":"PN_Cadet_Test_2403_Wasif.pdf","questions":[{"q":"Hottest place in Pakistan is:","o":["Turbat","Jacobabad","Lahore","Karachi"],"a":1},{"q":"Next number in the series 4, 9, 16, 25, 36 is:","o":["42","45","49","64"],"a":2},{"q":"Pi (π) is:","o":["Rational number","Irrational number","Whole number","Natural number"],"a":1},{"q":"The headquarters of the International Court of Justice is in:","o":["Russia","India","Netherlands","China"],"a":2},{"q":"Highest mountain of Pakistan is:","o":["Nanga Parbat","Rakaposhi","K2","Broad Peak"],"a":2},{"q":"Golden Gate Bridge is located in:","o":["Washington DC","New Delhi","San Francisco","New York"],"a":2},{"q":"How many weeks are there in a year?","o":["48","50","52","54"],"a":2},{"q":"Unit of angular momentum is:","o":["kg-m²/s","km/s","Ohm meter","Joule"],"a":0},{"q":"Flower is to seed as man is to:","o":["Egg","Sperm","Blood","Cell"],"a":1},{"q":"Kargil War was fought in:","o":["1998","1999","2000","2001"],"a":1},{"q":"Power of lens is measured in:","o":["Joule","Kelvin","Diopter","Watt"],"a":2},{"q":"Number of electrons in the valence shell of a semiconductor is:","o":["8","6","4","2"],"a":2},{"q":"Which pass connects Pakistan and China?","o":["Khyber Pass","Gomal Pass","Khunjerab Pass","Bolan Pass"],"a":2},{"q":"Which country has the oldest monarchy?","o":["China","Pakistan","Japan","India"],"a":2},{"q":"How many countries have veto power in the UN Security Council?","o":["4","5","7","9"],"a":1},{"q":"World War I started in:","o":["1912","1914","1916","1918"],"a":1},{"q":"Second Martial Law Administrator of Pakistan was:","o":["Ayub Khan","Yahya Khan","Zia-ul-Haq","Pervez Musharraf"],"a":1},{"q":"Rocket was first invented by:","o":["Robert Goddard","Newton","Einstein","Galileo"],"a":0},{"q":"Currency of Qatar is:","o":["Dinar","Dirham","Qatari Riyal","Pound"],"a":2},{"q":"Faisal Mosque is located in:","o":["Lahore","Islamabad","Karachi","Peshawar"],"a":1},{"q":"Synonym of \"Seize\" is:","o":["Stop","Catch","Hold","Grab"],"a":3},{"q":"Boiling point of water is:","o":["90°C","95°C","100°C","110°C"],"a":2},{"q":"Badshahi Mosque is located in:","o":["Karachi","Islamabad","Lahore","Multan"],"a":2},{"q":"Highest mountain of Pakistan is:","o":["Nanga Parbat","Rakaposhi","K2","Broad Peak"],"a":2},{"q":"Capital of Austria is:","o":["Vienna","Prague","Budapest","Berlin"],"a":0}]},{"id":"0204","name":"PN Cadet — 0204 Mock Test","source":"PN_Cadet_Test_0204_Wasif.pdf","questions":[{"q":"Antonym of \"Fast\" is:","o":["Rapid","Slow","Strong","Sharp"],"a":1},{"q":"Which country lies to the northwest of Pakistan?","o":["Iran","China","Afghanistan","India"],"a":2},{"q":"If a force of 10 N moves an object through 5 m, the work done will be:","o":["50 J","15 J","10 J","5 J"],"a":0},{"q":"Which planet is closest to the Earth?","o":["Mars","Venus","Mercury","Jupiter"],"a":1},{"q":"Pakistan joined SEATO in:","o":["1952","1953","1954","1956"],"a":2},{"q":"Antonym of \"Right\" is:","o":["Correct","Straight","Wrong","Accurate"],"a":2},{"q":"Increase in speed or velocity due to force is called:","o":["Momentum","Acceleration","Friction","Inertia"],"a":1},{"q":"The formula for velocity of a falling body is:","o":["v = √2gh","v = gh","v = 2gh","v = h/g"],"a":0},{"q":"Antonym of \"Hot\" is:","o":["Warm","Cold","Heat","Boil"],"a":1},{"q":"Antonym of \"Tall\" is:","o":["High","Big","Short","Wide"],"a":2},{"q":"Heat is related to Cold in the same way as Smaller is related to:","o":["Tiny","Big","Short","Thin"],"a":1},{"q":"If unequal forces act on a body from opposite directions, the body will move in the direction of:","o":["Smaller force","Greater force","Both directions","It will not move"],"a":1},{"q":"Work is defined as:","o":["Force × Distance","Force × Time","Mass × Acceleration","Energy × Time"],"a":0},{"q":"1 + 1 ÷ (1 + 2) =","o":["1/2","1/3","2/3","3"],"a":1},{"q":"Antonym of \"Happy\" is:","o":["Sad","Angry","Proud","Weak"],"a":0},{"q":"The formula for nCr is:","o":["n! / r!(n - r)!","n! / r!","r! / n!","n! / (n - r)!"],"a":0},{"q":"If A · B = C in matrix algebra, then B equals:","o":["AC","A⁻¹C","CA","C⁻¹A"],"a":1},{"q":"Synonym of \"Large\" is:","o":["Small","Tiny","Huge","Weak"],"a":2},{"q":"Acceleration due to gravity (g) is approximately:","o":["5 m/s²","9.8 m/s²","12 m/s²","15 m/s²"],"a":1},{"q":"Area of Islamabad is approximately:","o":["806.5 km²","906.5 km²","1006.5 km²","706.5 km²"],"a":1},{"q":"If a body falls from height 10 m, its speed will be approximately:","o":["10 m/s","12 m/s","14 m/s","20 m/s"],"a":2},{"q":"Ariana is the airline of which country?","o":["Iran","Afghanistan","Turkey","UAE"],"a":1}]},{"id":"1803","name":"PN Cadet — 1803 Mock Test","source":"PN_Cadet_Test_1803_Wasif.pdf","questions":[{"q":"Flow of electric charge is called:","o":["Voltage","Electric current","Resistance","Power"],"a":1},{"q":"Capital of Italy is:","o":["Paris","Rome","Madrid","Berlin"],"a":1},{"q":"The trees uprooted by the wind storm are ________ in the middle of the road.","o":["Laid","Lying","Lay","Lain"],"a":1},{"q":"Warsak Dam is built on which river?","o":["Indus River","Kabul River","Chenab River","Ravi River"],"a":1},{"q":"World War II ended in:","o":["1942","1943","1944","1945"],"a":3},{"q":"Conjugate of 5 + 3i is:","o":["5 + 3i","5 - 3i","-5 + 3i","5 × 3i"],"a":1},{"q":"Unit of power is:","o":["Candela","Joule","Watt","Kelvin"],"a":2},{"q":"Capital city of Iran is:","o":["Baghdad","Tehran","Ankara","Kabul"],"a":1},{"q":"The most important organ of the United Nations is:","o":["Security Council","General Assembly","Economic Council","International Court of Justice"],"a":0},{"q":"Durand Line connects:","o":["Pakistan and Iran","Pakistan and Afghanistan","Pakistan and China","Pakistan and India"],"a":1},{"q":"The ratio of output energy to input energy is called:","o":["Work","Power","Efficiency","Force"],"a":2},{"q":"SI unit of electric charge is:","o":["Coulomb","Ampere","Ohm","Volt"],"a":0},{"q":"The power failure remained ________ it was repaired.","o":["As long as","So long as","Unless","Until"],"a":3},{"q":"He didn't go anywhere ________ his mother allowed him.","o":["As long as","So long as","Unless","Until"],"a":3},{"q":"The oldest country in the world is:","o":["Iran","Egypt","China","Greece"],"a":0},{"q":"SI unit of energy is:","o":["Joule","Watt","Volt","Ampere"],"a":0},{"q":"Lucknow Pact was between:","o":["Congress and British","Muslim League and British","Indian National Congress and Muslim League","Congress and Sikhs"],"a":2},{"q":"1 + 1 ÷ (1 + 2) =","o":["1/2","1/3","2/3","3"],"a":1},{"q":"The largest dam in the world is:","o":["Tarbela Dam","Hoover Dam","Three Gorges Dam","Aswan Dam"],"a":2},{"q":"A 2 meter high tank is full of water. A hole is made in the middle of the tank. The speed of efflux will be:","o":["3.13 m/s","4.42 m/s","5.5 m/s","6.2 m/s"],"a":1},{"q":"Capital of Turkey is:","o":["Brussels","Ankara","Nairobi","Istanbul"],"a":1},{"q":"Synonym of \"Delegate\" is:","o":["Wild","Representative","Native","Angry"],"a":1}]},{"id":"experience","name":"PN Cadet — Experience Mock Test","source":"PN_Cadet_Test_Experience_Wasif_Rasheed.pdf","questions":[{"q":"Currency of Turkey is:","o":["Riyal","Lira","Dinar","Pound"],"a":1},{"q":"Synonym of Alert is:","o":["Careless","Watchful","Slow","Weak"],"a":1},{"q":"Speed of sound in solids is approximately:","o":["00 m/s","2000 m/s","6000 m/s","340 m/s"],"a":2},{"q":"If you follow the rules, you ________ disqualified.","o":["will be","will not be","were","would be"],"a":1},{"q":"Greenwich Mean Time (GMT) is associated with:","o":["Paris Observatory","Greenwich Observatory","Tokyo Observatory","Geneva Observatory"],"a":1},{"q":"Synonym of Garbage is:","o":["Trash","Gold","Water","Food"],"a":0},{"q":"Capital of Turkey is:","o":["Ankara","Brussels","Athens","Istanbul"],"a":0},{"q":"Resistance is directly proportional to:","o":["Area","Length","Voltage","Current"],"a":1},{"q":"Photoelectric effect was discovered by:","o":["Newton","Thomas Edison","Heinrich Hertz","Faraday"],"a":2},{"q":"Synonym of Precarious is:","o":["Safe","Dangerous","Stable","Certain"],"a":1},{"q":"I promise to ________ you in all circumstances.","o":["help","stand with","work","call"],"a":1},{"q":"The police ________ for the robber for a long time.","o":["look","have been looking","looked","looking"],"a":1},{"q":"Largest dam of Pakistan is:","o":["Mangla Dam","Tarbela Dam","Warsak Dam","Hub Dam"],"a":1},{"q":"Antonym of Artificial is:","o":["Natural","Fake","Chemical","Plastic"],"a":0},{"q":"ICJ (International Court of Justice) is in which country?","o":["France","Netherlands","Germany","Switzerland"],"a":1},{"q":"Currency of Australia is:","o":["Euro","Pound","Australian Dollar","Dollar"],"a":2},{"q":"Antonym of Attract is:","o":["Pull","Repel","Invite","Join"],"a":1},{"q":"I ________ to Islamabad with some friends last night.","o":["go","gone","went","going"],"a":2},{"q":"Find the next number in the series: 19, 38, 57, ...","o":["72","74","76","78"],"a":2},{"q":"\"Quota\" means:","o":["Share","Limit","Fixed portion","All of these"],"a":3},{"q":"If I had helped him, he ________ drowned.","o":["will not have","would not have","did not","does not"],"a":1},{"q":"Crystals of a material can behave as:","o":["Reflection grating","Diffraction grating","Mirror","Lens"],"a":1},{"q":"Synonym of Immerse is:","o":["Dip","Remove","Dry","Open"],"a":0},{"q":"Antonym of Expand is:","o":["Increase","Extend","Contract","Develop"],"a":2},{"q":"He ________ as a teacher before he became a lecturer.","o":["works","worked","had worked","working"],"a":2},{"q":"Which of the following countries is not a member of the European Union?","o":["Germany","France","Lebanon","Italy"],"a":2}]}];
+window.PN_CADET_MOCKS=PN_CADET_MOCKS;
+
+
+var state={page:"home",force:"",student:null,index:0,answers:[],uploads:[],results:[],profile:null,selectedMockId:null,activeQuestions:null};
+var DB_NAME="PakForcesPreparationDB", DB_VERSION=1, db=null;
+
+function openDB(){
+ return new Promise(function(resolve,reject){
+  if(db){resolve(db);return}
+  var req=indexedDB.open(DB_NAME,DB_VERSION);
+  req.onupgradeneeded=function(e){
+   var d=e.target.result;
+   if(!d.objectStoreNames.contains("uploads")) d.createObjectStore("uploads",{keyPath:"id"});
+   if(!d.objectStoreNames.contains("results")) d.createObjectStore("results",{keyPath:"id"});
+  };
+  req.onsuccess=function(e){db=e.target.result;resolve(db)};
+  req.onerror=function(){reject(req.error)};
+ });
+}
+function idbAll(store){
+ return openDB().then(function(d){return new Promise(function(resolve,reject){
+  var r=d.transaction(store,"readonly").objectStore(store).getAll();
+  r.onsuccess=function(){resolve(r.result||[])};
+  r.onerror=function(){reject(r.error)};
+ })});
+}
+function idbPut(store,obj){
+ return openDB().then(function(d){return new Promise(function(resolve,reject){
+  var r=d.transaction(store,"readwrite").objectStore(store).put(obj);
+  r.onsuccess=function(){resolve()};
+  r.onerror=function(){reject(r.error)};
+ })});
+}
+function idbDelete(store,id){
+ return openDB().then(function(d){return new Promise(function(resolve,reject){
+  var r=d.transaction(store,"readwrite").objectStore(store).delete(id);
+  r.onsuccess=function(){resolve()};
+  r.onerror=function(){reject(r.error)};
+ })});
+}
+function idbClear(store){
+ return openDB().then(function(d){return new Promise(function(resolve,reject){
+  var r=d.transaction(store,"readwrite").objectStore(store).clear();
+  r.onsuccess=function(){resolve()};
+  r.onerror=function(){reject(r.error)};
+ })});
+}
+function loadProfile(){
+ try{state.profile=JSON.parse(localStorage.getItem("PF_STUDENT_PROFILE")||"null")}catch(e){state.profile=null}
+ if(!state.profile || !state.profile.name || !state.profile.phone){
+  document.getElementById("startup").style.display="flex";
+ }
+}
+window.saveStartupProfile=function(){
+ var n=document.getElementById("startupName").value.trim();
+ var p=document.getElementById("startupPhone").value.trim();
+ var sn=(document.getElementById("startupStudentNumber").value||"").trim();
+ if(!n||!sn||!p){alert("Please enter Student Name, Student Number and Phone Number.");return}
+ state.profile={name:n,studentNumber:sn,phone:p};
+ try{localStorage.setItem("PF_STUDENT_PROFILE",JSON.stringify(state.profile))}catch(e){}
+ document.getElementById("startup").style.display="none";
+}
+
+function loadPersistent(){
+ return Promise.all([idbAll("uploads"),idbAll("results")]).then(function(v){
+  state.uploads=(v[0]||[]).map(function(x){
+   if(x.force==="navy") x.force="navycs";
+   return x;
+  });
+  state.results=v[1]||[]; render();
+ }).catch(function(){
+  try{state.uploads=JSON.parse(localStorage.getItem("PF_UPLOADS")||"[]").map(function(x){if(x.force==="navy")x.force="navycs";return x})}catch(e){state.uploads=[]}
+  try{state.results=JSON.parse(localStorage.getItem("PF_RESULTS")||"[]")}catch(e){state.results=[]}
+  render();
+ });
+}
+function saveResults(){
+ return idbClear("results").then(function(){
+  return Promise.all(state.results.map(function(r){return idbPut("results",r)}));
+ }).catch(function(){
+  try{localStorage.setItem("PF_RESULTS",JSON.stringify(state.results))}catch(e){}
+ });
+}
+function esc(v){return String(v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]})}
+function setPage(p){state.page=p;render()}
+window.home=function(){setPage("home")}
+window.tests=function(){setPage("tests")}
+window.files=function(){setPage("files")}
+window.adminLogin=function(){setPage("login")}
+window.forcePage=function(k){state.force=k;setPage("force")}
+function render(){
+ var a=document.getElementById("app");
+ if(state.page==="home") renderHome(a);
+ else if(state.page==="force") renderForce(a);
+ else if(state.page==="files") renderFiles(a);
+ else if(state.page==="tests") renderTests(a);
+ else if(state.page==="login") renderLogin(a);
+ else if(state.page==="admin") renderAdmin(a);
+ else if(state.page==="student") renderStudent(a);
+ else if(state.page==="question") renderQuestion(a);
+ else if(state.page==="result") renderResult(a);
+}
+function renderHome(a){
+ var cards="";
+ Object.keys(forces).forEach(function(k){
+  cards+='<div class="tile" onclick="forcePage(\''+k+'\')"><div class="emoji">'+forces[k].icon+'</div><h3>'+forces[k].name+'</h3><div class="small">PDF Notes + Mock Tests</div></div>';
+ });
+ a.innerHTML='<div class="hero"><h1>Pak Forces Preparation</h1><p>Prepare • Practice • Achieve</p><p class="gold">Created By Wasif Rasheed</p><p>☎ 03369113955</p></div><div class="grid">'+cards+'</div>';
+}
+function renderForce(a){
+ var k=state.force, list=state.uploads.filter(function(x){return x.force===k});
+ var pdfs=list.filter(function(x){return x.kind==="PDF"});
+ var mocks=list.filter(function(x){return x.kind==="Mock Test"});
+ function rows(arr,kind){
+  if(!arr.length) return '<p class="small empty">No '+kind+' uploaded yet.</p>';
+  return arr.map(function(x){
+   var btn=kind==="Mock Test" ? '<button onclick="startUploadedMock(\''+x.id+'\')">Open Test</button>' : '<button onclick="openUpload(\''+x.id+'\')">Open PDF</button>';
+   return '<div class="item fileRow"><span style="flex:1;min-width:0"><b>'+esc(x.name)+'</b><br><span class="small">'+esc(kind)+'</span></span>'+btn+'</div>';
+  }).join('');
+ }
+ var pnMockHtml='';
+ if(k==='pn'){
+   pnMockHtml='<div class="card"><h2>📝 PN Cadet Mock Tests</h2><p class="small">ہر Mock Test اسی متعلقہ PDF کے اصل MCQs سے بنایا گیا ہے۔</p><div class="stack">'+PN_CADET_MOCKS.map(function(m,i){return '<div class="item fileRow"><span style="flex:1;min-width:0"><b>Mock Test '+(i+1)+'</b><br><span class="small">'+m.questions.length+' MCQs</span></span><button onclick="startPNCadetMock(\''+m.id+'\')">Start Test</button></div>';}).join('')+'</div></div>';
+ }
+ a.innerHTML='<div class="card"><button class="secondary" onclick="home()">← Back</button><h2>'+forces[k].icon+' '+forces[k].name+'</h2><p class="small">PDF Notes and Mock Tests are kept separately. Uploaded files remain after refresh.</p></div>'+
+ '<div class="card"><h2>📄 PDF Notes</h2><div class="stack">'+rows(pdfs,"PDF")+'</div></div>'+pnMockHtml+
+ '<div class="card"><h2>📝 Mock Tests</h2><button onclick="startStudent()">Start Built-in Practice Test</button><div class="stack">'+rows(mocks,"Mock Test")+'</div></div>';
+}
+window.showForceFiles=function(){render()}
+
+function renderFiles(a){
+ var out='<div class="card"><h2>Files</h2><p class="small">Select a force.</p>';
+ Object.keys(forces).forEach(function(k){out+='<button onclick="forcePage(\''+k+'\')">'+forces[k].icon+' '+forces[k].name+'</button>'});
+ out+='</div>';a.innerHTML=out;
+}
+function renderTests(a){
+ var out='<div class="card"><h2>Mock Tests</h2><p>Select a force and enter student details.</p>';
+ Object.keys(forces).forEach(function(k){out+='<button onclick="chooseForceTest(\''+k+'\')">'+forces[k].icon+' '+forces[k].name+'</button>'});
+ out+='</div>';a.innerHTML=out;
+}
+window.chooseForceTest=function(k){state.force=k;startStudent()}
+function renderLogin(a){
+ a.innerHTML='<div class="card"><h2>Admin Login</h2><label>Password<input id="adminpw" type="password" placeholder="Enter admin password"></label><button onclick="doLogin()">Login</button></div>';
+}
+window.doLogin=function(){
+ if(document.getElementById("adminpw").value===ADMIN_PASSWORD)setPage("admin");else alert("Wrong password");
+}
+function renderAdmin(a){
+ var out='<div class="card"><h2>Admin Panel</h2><p class="small">Only the admin password can access upload and delete controls.</p><div class="card" style="background:#eef8f5"><h3>☁️ Online Sync</h3><p class="small">Connected to shared online library.</p><input id="cloudUrlInput" value="https://ugcmnmycoimdthxxoeky.supabase.co" readonly><input id="cloudKeyInput" value="sb_publishable_Z0pFsH50CXZPi-w_HD6Aog_-jeUOCQO" readonly><button id="adminSyncBtn">Sync Now</button></div><label>Category<select id="adminCat">';
+ Object.keys(forces).forEach(function(k){out+='<option value="'+k+'">'+forces[k].name+'</option>'});
+ out+='</select></label><h3>Upload PDF</h3><input id="pdfFile" type="file" accept="application/pdf,.pdf"><button onclick="uploadSelected(\'pdfFile\',\'PDF\')">Upload PDF</button><h3>Upload Mock Test</h3><input id="mockFile" type="file" accept=".html,.htm,.json,.txt,.pdf"><button onclick="uploadSelected(\'mockFile\',\'Mock Test\')">Upload Mock Test</button></div><h3>Uploaded Content</h3><div>';
+ state.uploads.forEach(function(x){var xid=String(x.id);out+='<div class="item"><span><b>'+esc(x.name)+'</b><br><span class="small">'+esc((forces[x.force]||{}).name||x.force||'')+' • '+esc(x.kind||x.file_type||'')+'</span></span><span><button onclick="openUpload(\''+xid+'\')">Open</button><button class="danger" onclick="deleteUpload(\''+xid+'\')">Delete</button></span></div>'});
+ out+='</div><h3>Student Results</h3><div class="card">';
+ var now=Date.now(), dayMs=24*60*60*1000;
+ var freshResults=(state.results||[]).filter(function(r){var t=Date.parse(r.time||r.created_at||'');return t&&((now-t)<=dayMs)&&((now-t)>=0);});
+ if(!freshResults.length)out+='<p class="small">No test results from the last 24 hours.</p>';
+ freshResults.slice().reverse().forEach(function(r){out+='<div class="item"><span><b>'+esc(r.name)+'</b><br>CNIC: '+esc(r.cnic||'')+'<br>Phone: '+esc(r.phone||'')+'<br>Registration: '+esc(r.registration||r.studentNumber||'')+'<br><span class="small">'+esc(r.force||'')+' • '+esc(r.test_name||r.mockName||r.type||'Test')+' • '+(r.score!=null?r.score+'%':'Started / result pending')+'</span></span></div>'});
+ out+='</div>';a.innerHTML=out;
+ var sb=document.getElementById('adminSyncBtn');if(sb)sb.onclick=function(){Promise.all([syncUploads(),syncResults()]).then(function(){alert('Sync complete.');}).catch(function(e){alert('Sync failed: '+e.message);});};
+}
+window.saveCloudSettings=function(){var u=(document.getElementById("cloudUrlInput").value||"").trim();var k=(document.getElementById("cloudKeyInput").value||"").trim();if(!/^https:\/\/[^\s]+$/.test(u)||!k){alert("Enter a valid Supabase Project URL and anon/public key.");return}try{localStorage.setItem("PF_CLOUD_CONFIG",JSON.stringify({url:u,anonKey:k,bucket:"app-files"}));alert("Cloud settings saved. Re-open Admin or refresh to sync.");}catch(e){alert("Could not save settings.");}};
+window.uploadSelected=function(inputId,kind){
+ var input=document.getElementById(inputId), file=input && input.files ? input.files[0] : null;
+ if(!file){alert("Please select a file from File Manager first.");return}
+ var id=Date.now()+"_"+Math.random().toString(36).slice(2);
+ var force=document.getElementById("adminCat").value;
+ var readPromise = file.arrayBuffer ? file.arrayBuffer() : new Promise(function(resolve,reject){
+   var r=new FileReader();
+   r.onload=function(){resolve(r.result)};
+   r.onerror=function(){reject(r.error||new Error("File read failed"))};
+   r.readAsArrayBuffer(file);
+ });
+ readPromise.then(function(buffer){
+  var item={id:id,force:force,name:file.name,kind:kind,type:file.type||"application/octet-stream",data:buffer,size:file.size,time:new Date().toISOString()};
+  return idbPut("uploads",item).then(function(){
+   state.uploads.push(item);
+   input.value="";
+   alert("Uploaded successfully. The file is saved on this device and will remain after app refresh.");
+   render();
+  });
+ }).catch(function(e){
+  alert("Upload failed: " + (e && e.message ? e.message : "Could not save the file. Please check app storage permission/space."));
+  console.error(e);
+ });
+}
+window.deleteUpload=function(id){
+ if(confirm("Delete this file?")){
+  idbDelete("uploads",id).then(function(){
+   state.uploads=state.uploads.filter(function(x){return x.id!==id});render();
+  });
+ }
+}
+function closeViewer(){
+ var v=document.getElementById('viewer');
+ if(!v)return;
+ v.style.display='none';
+ v.dataset.mode='';v.dataset.mockId='';v.dataset.url='';
+ var wrap=document.getElementById('pdfPages');
+ wrap.style.zoom='1';wrap.innerHTML='<div id="pdfLoading">PDF pages will appear here…</div>';
+ document.getElementById('submitMockBtn').style.display='none';
+ document.getElementById('submitMockBtn').disabled=true;
+ document.getElementById('submitMockBar').style.display='none';
+ document.getElementById('pdfZoomOut').style.display='none';
+ document.getElementById('pdfZoomReset').style.display='none';
+ document.getElementById('pdfZoomIn').style.display='none';
+}
+window.closeViewer=closeViewer;
+window.PF_ZOOM=function(step){
+ var v=document.getElementById('viewer'),wrap=document.getElementById('pdfPages');
+ var z=Number(v.dataset.pdfZoom||'1');
+ if(step===0)z=1; else z=Math.max(.5,Math.min(3,z+(step*.15)));
+ v.dataset.pdfZoom=String(z);wrap.style.zoom=String(z);wrap.style.transformOrigin='top left';wrap.style.width=(100/z)+'%';wrap.style.maxWidth='none';v.style.overflowX=(z>1?'auto':'hidden');
+ var reset=document.getElementById('pdfZoomReset'); if(reset)reset.textContent=Math.round(z*100)+'%';
+};
+function openPdfUrl(x,url){
+ if(!url){alert('PDF URL is missing. Please press Sync Now and try again.');return;}
+ if(!window.pdfjsLib){alert('PDF viewer is not loaded. Please check your internet connection and reopen the app.');return;}
+ var v=document.getElementById('viewer'),wrap=document.getElementById('pdfPages'),status=document.getElementById('pdfStatus');
+ document.getElementById('viewerTitle').textContent=x.name||'PDF';
+ v.style.display='block';v.dataset.mode='pdf';v.dataset.mockId='';v.dataset.pdfZoom='1';
+ document.getElementById('pdfZoomOut').style.display='inline-block';document.getElementById('pdfZoomReset').style.display='inline-block';document.getElementById('pdfZoomIn').style.display='inline-block';
+ document.getElementById('submitMockBtn').style.display='none';document.getElementById('submitMockBtn').disabled=true;document.getElementById('submitMockBar').style.display='none';
+ wrap.style.zoom='1';wrap.style.width='100%';wrap.style.maxWidth='none';v.style.overflowX='hidden';wrap.innerHTML='<div id="pdfLoading">Opening PDF…</div>';status.textContent='Opening PDF…';
+ pdfjsLib.getDocument({url:url,withCredentials:false,disableStream:false,disableAutoFetch:false,rangeChunkSize:1048576}).promise.then(function(pdf){
+   status.textContent='PDF • '+pdf.numPages+' pages';wrap.innerHTML='';var pages=[];
+   for(var i=1;i<=pdf.numPages;i++){var holder=document.createElement('div');holder.style.cssText='width:100%;max-width:100%;min-height:120px;display:flex;align-items:center;justify-content:center;color:#666;background:#fff;box-shadow:0 2px 10px #0002;margin:0 auto 8px;overflow:hidden;';holder.dataset.page=String(i);holder.textContent='Loading page '+i+'…';wrap.appendChild(holder);pages.push(holder);}
+   var active={};function renderPage(holder){var n=Number(holder.dataset.page);if(active[n])return;active[n]=true;pdf.getPage(n).then(function(page){var baseViewport=page.getViewport({scale:1});var availableWidth=Math.max(280,(document.getElementById('viewer').clientWidth||window.innerWidth)-8);var fitScale=availableWidth/baseViewport.width;var viewport=page.getViewport({scale:fitScale});var canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');canvas.className='pdfPage';canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);canvas.style.width='100%';canvas.style.maxWidth='100%';canvas.style.height='auto';canvas.style.display='block';holder.innerHTML='';holder.style.minHeight='0';holder.appendChild(canvas);return page.render({canvasContext:ctx,viewport:viewport}).promise;}).catch(function(e){holder.textContent='Could not render page '+n+': '+(e.message||e);holder.style.color='#a5201c';});}
+   renderPage(pages[0]); if('IntersectionObserver' in window){var obs=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){renderPage(en.target);obs.unobserve(en.target);}})},{root:v,rootMargin:'180px 0px'});pages.forEach(function(h){obs.observe(h);});}else pages.forEach(renderPage);
+ }).catch(function(e){status.textContent='PDF could not be opened';wrap.innerHTML='<div id="pdfLoading">Could not load PDF from online storage.<br><button onclick="openPdfBlob(window.PF_LAST_PDF_X,window.PF_LAST_PDF_BLOB)">Retry Download</button></div>';window.PF_LAST_PDF_X=x;window.PF_LAST_PDF_URL=url;fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Download failed ('+r.status+')');return r.blob();}).then(function(b){window.PF_LAST_PDF_BLOB=b;}).catch(function(){ });});
+}
+window.openPdfUrl=openPdfUrl;
+function openPdfBlob(x,blob){
+ if(!blob){alert('PDF file could not be downloaded. Please try again.');return;}
+ if(!window.pdfjsLib){alert('PDF viewer is not loaded. Please check your internet connection and reopen the app.');return;}
+ var v=document.getElementById('viewer'),wrap=document.getElementById('pdfPages');
+ var status=document.getElementById('pdfStatus');
+ document.getElementById('viewerTitle').textContent=x.name||'PDF';
+ v.style.display='block';v.dataset.mode='pdf';v.dataset.mockId='';v.dataset.pdfZoom='1';
+ document.getElementById('pdfZoomOut').style.display='inline-block';
+ document.getElementById('pdfZoomReset').style.display='inline-block';
+ document.getElementById('pdfZoomIn').style.display='inline-block';
+ document.getElementById('submitMockBtn').style.display='none';
+ document.getElementById('submitMockBtn').disabled=true;
+ document.getElementById('submitMockBar').style.display='none';
+ wrap.style.zoom='1';wrap.style.width='100%';wrap.style.maxWidth='none';v.style.overflowX='hidden';wrap.innerHTML='<div id="pdfLoading">Loading PDF…</div>'; 
+ status.textContent='Loading PDF…';
+ var reader=new FileReader();
+ reader.onload=function(){
+   var data=new Uint8Array(reader.result);
+   pdfjsLib.getDocument({data:data}).promise.then(function(pdf){
+     status.textContent='PDF • '+pdf.numPages+' pages';
+     wrap.innerHTML='';
+     var pages=[];
+     for(var i=1;i<=pdf.numPages;i++){
+       var holder=document.createElement('div');
+       holder.style.cssText='width:100%;max-width:100%;min-height:120px;display:flex;align-items:center;justify-content:center;color:#666;background:#fff;box-shadow:0 2px 10px #0002;margin:0 auto 8px;overflow:hidden;';
+       holder.dataset.page=String(i);holder.textContent='Loading page '+i+'…';
+       wrap.appendChild(holder);pages.push(holder);
+     }
+     var active={};
+     function renderPage(holder){
+       var n=Number(holder.dataset.page); if(active[n])return; active[n]=true;
+       pdf.getPage(n).then(function(page){
+         var base=1.35;
+         var viewport=page.getViewport({scale:base});
+         var canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+         canvas.className='pdfPage';canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
+         canvas.style.width='98%';canvas.style.maxWidth='98%';canvas.style.height='auto';
+         holder.innerHTML='';holder.style.minHeight='0';holder.style.background='#fff';holder.appendChild(canvas);
+         return page.render({canvasContext:ctx,viewport:viewport}).promise;
+       }).catch(function(e){holder.textContent='Could not render page '+n+': '+(e.message||e);holder.style.color='#a5201c';});
+     }
+     renderPage(pages[0]);
+     if('IntersectionObserver' in window){
+       var obs=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){renderPage(en.target);obs.unobserve(en.target);}})},{root:v,rootMargin:'180px 0px'});
+       pages.forEach(function(h){obs.observe(h);});
+     }else{pages.forEach(renderPage);}
+   }).catch(function(e){status.textContent='PDF could not be opened';wrap.innerHTML='<div id="pdfLoading">Invalid or unsupported PDF: '+esc(e.message||e)+'</div>';});
+ };
+ reader.onerror=function(){alert('PDF could not be read.');};
+ reader.readAsArrayBuffer(blob);
+}
+window.openPdfBlob=openPdfBlob;
+function watchMockCompletion(frame){
+ var btn=document.getElementById('submitMockBtn');
+ if(!btn)return;
+ btn.style.display='inline-block';btn.disabled=false;
+ document.getElementById('submitMockBar').style.display='block';
+ window.PF_MOCK_RESULT=null;
+ try{
+   var doc=frame&&frame.contentDocument;
+   if(doc){
+     var inner=doc.querySelectorAll('button,input[type=button],input[type=submit]');
+     for(var j=0;j<inner.length;j++){
+       var tx=((inner[j].innerText||inner[j].value||inner[j].getAttribute('aria-label')||'')+'').trim().toLowerCase();
+       if(/submit|finish|check result|show result|see result/.test(tx)){inner[j].disabled=false;inner[j].removeAttribute('disabled');inner[j].style.display='';inner[j].style.visibility='visible';break;}
+     }
+   }
+ }catch(e){}
+ function acceptResult(data){
+   if(!data)return;
+   var score=data.score;
+   if(typeof score==='string')score=score.replace('%','').trim();
+   if(score!==undefined && score!==null && score!=='' && !isNaN(Number(score))){
+     window.PF_MOCK_RESULT={score:Number(score),correct:data.correct,total:data.total,test_name:data.test_name||data.testName||null};
+     if(window.PF_STATE&&window.PF_STATE.testSession&&window.PF_STATE.testSession.testType==='uploaded'){setTimeout(function(){submitUploadedMockResult();},250);}
+   }
+ }
+ window.addEventListener('message',function(ev){
+   try{if(ev.data&&ev.data.type==='PF_MOCK_RESULT')acceptResult(ev.data);}catch(e){}
+ });
+ try{frame.contentWindow.postMessage({type:'PF_MOCK_READY'},'*');}catch(e){}
+}
+window.watchMockCompletion=watchMockCompletion;
+function extractMockScoreFromText(text){
+ var s=String(text||'');
+ var m=s.match(/(?:score|marks|result)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*%/i);
+ if(m)return Number(m[1]);
+ var mRatio=s.match(/(?:score|marks|result)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/i);
+ if(mRatio){var got=Number(mRatio[1]),max=Number(mRatio[2]);if(max>0)return {percent:(got/max)*100,correct:got,total:max};}
+ var m2=s.match(/(\d+(?:\.\d+)?)\s*%/);
+ return m2?Number(m2[1]):null;
+}
+function submitUploadedMockResult(){
+ var v=document.getElementById('viewer'),id=v&&v.dataset.mockId;
+ var session=window.PF_STATE.testSession;
+ var started=Number(v&&v.dataset.submitAttempt||0);
+ if(!started){started=Date.now();if(v)v.dataset.submitAttempt=String(started);}
+ if(Date.now()-started>15000){if(v)delete v.dataset.submitAttempt;alert('Please press Submit Test after the quiz shows its final score.');return;}
+ if(!id||!session){alert('No active mock test.');return;}
+ var x=window.PF_STATE.uploads.find(function(z){return String(z.id)===String(id)});
+ if(!x){alert('Mock test record not found.');return;}
+ var detected=window.PF_MOCK_RESULT||{};
+ var score=detected.score;
+ var extracted=null;
+ try{var frame=document.getElementById('mockFrame');if(score==null&&frame&&frame.contentDocument){extracted=extractMockScoreFromText(frame.contentDocument.body.innerText||frame.contentDocument.body.textContent||'');if(extracted&&typeof extracted==='object'){score=extracted.percent;if(detected.correct==null)detected.correct=extracted.correct;if(detected.total==null)detected.total=extracted.total;}else score=extracted;}}catch(e){}
+ if(score==null){
+   try{
+     if(frame&&frame.contentDocument){
+       var els=frame.contentDocument.querySelectorAll('button,input[type=button],input[type=submit]');
+       for(var i=0;i<els.length;i++){
+         var t=((els[i].innerText||els[i].value||els[i].getAttribute('aria-label')||'')+'').trim().toLowerCase();
+         if(/submit|finish|check result|show result|see result/.test(t)){els[i].disabled=false;els[i].removeAttribute('disabled');els[i].click();break;}
+       }
+     }
+   }catch(e){}
+   setTimeout(function(){submitUploadedMockResult();},700);
+   return;
+ }
+ score=Math.max(0,Math.min(100,Number(score)));
+ var rr={id:session.id,name:session.name,cnic:session.studentNumber||'',phone:session.phone||'',force:(window.PF_FORCES[x.force]||{}).name||x.force||'',score:score,correct:detected.correct==null?null:Number(detected.correct),total:detected.total==null?null:Number(detected.total),test_name:x.name||'Mock Test',time:new Date().toISOString(),type:'Uploaded Mock Test'};
+ window.PF_STATE.results=window.PF_STATE.results.filter(function(r){return String(r.id)!==String(rr.id)});window.PF_STATE.results.push(rr);
+ /* A completed uploaded mock has no pre-created online row; create its final result now. */
+ var saver=window.PFCloudSaveResult?window.PFCloudSaveResult(rr):window.saveResults();
+ Promise.resolve(saver).then(function(){
+   var bar=document.getElementById('submitMockBar');if(bar)bar.style.display='none';
+   var btn=document.getElementById('submitMockBtn');if(btn)btn.disabled=true;
+   window.PF_STATE.testSession=null;closeViewer();window.PF_STATE.pendingTestResult=rr;setPage('result');
+ }).catch(function(e){alert('Result save failed: '+(e&&e.message?e.message:String(e)));});
+}
+window.submitUploadedMockResult=submitUploadedMockResult;
+
+function uploadToBlob(x){
+ var blob=null;
+ try{
+  var mime=x.type || x.mime || (String(x.name).toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'application/octet-stream');
+  if(typeof Blob!=='undefined' && x.data instanceof Blob) return x.data;
+  if(x.data instanceof ArrayBuffer) blob=new Blob([x.data],{type:mime});
+  else if(x.data && x.data.buffer instanceof ArrayBuffer) blob=new Blob([x.data.buffer],{type:mime});
+  else if(typeof x.data==='string'){var parts=x.data.split(','),raw=parts.length>1?atob(parts[1]):atob(parts[0]),arr=new Uint8Array(raw.length);for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);blob=new Blob([arr],{type:mime});}
+ }catch(e){console.error(e)}
+ return blob;
+}
+window.openMockUpload=openMockUpload;
+function showMockBlob(x,blob){
+ if(!blob){alert('This mock test cannot be opened. Please upload it again.');return}
+ var name=String(x.name||'').toLowerCase();
+ var mime=String(blob.type||x.mime||'').toLowerCase();
+ if(mime==='application/pdf'||name.endsWith('.pdf')){openPdfBlob(x,blob);return}
+ var fr=new FileReader();
+ fr.onload=function(){
+   var text=String(fr.result||'');
+   var v=document.getElementById('viewer');
+   var wrap=document.getElementById('pdfPages');
+   document.getElementById('viewerTitle').textContent=x.name||'Mock Test';
+   v.style.display='block'; v.dataset.mode='mock'; v.dataset.mockId=String(x.id); v.dataset.pdfZoom='1'; delete v.dataset.submitAttempt;
+   document.getElementById('pdfZoomOut').style.display='none';
+   document.getElementById('pdfZoomReset').style.display='none';
+   document.getElementById('pdfZoomIn').style.display='none';
+   wrap.style.zoom='1';
+   document.getElementById('pdfStatus').textContent='Mock Test — complete the quiz, then press Submit Test';
+   document.getElementById('submitMockBtn').style.display='inline-block';
+   document.getElementById('submitMockBtn').disabled=false;
+   document.getElementById('submitMockBar').style.display='block';
+   delete v.dataset.submitAttempt;
+   wrap.innerHTML='<iframe id="mockFrame" title="Mock Test" style="width:100%;height:900px;border:0;background:#fff;display:block"></iframe>';
+   var frame=document.getElementById('mockFrame');
+   try{frame.srcdoc=text; frame.addEventListener('load',function(){
+     try{
+       var resize=function(){try{var d=frame.contentDocument;var h=Math.max(d.body?d.body.scrollHeight:0,d.documentElement?d.documentElement.scrollHeight:0,700);frame.style.height=(h+40)+'px';}catch(e){}};
+       resize();setTimeout(resize,250);setTimeout(resize,900);
+       if(frame.contentWindow&&frame.contentWindow.ResizeObserver&&frame.contentDocument&&frame.contentDocument.body){new frame.contentWindow.ResizeObserver(resize).observe(frame.contentDocument.body);}
+     }catch(e){}
+     if(window.watchMockCompletion)window.watchMockCompletion(frame);
+   });}catch(e){
+     frame.src=URL.createObjectURL(new Blob([text],{type:mime||'text/html'}));
+     frame.addEventListener('load',function(){if(window.watchMockCompletion)window.watchMockCompletion(frame);});
+   }
+ };
+ fr.onerror=function(){alert('This mock test could not be read. Please upload it again.');};
+ fr.readAsText(blob);
+}
+function openMockUpload(id,providedBlob){
+ var x=state.uploads.find(function(z){return String(z.id)===String(id)}); if(!x)return;
+ if(providedBlob){showMockBlob(x,providedBlob);return;}
+ /* Online synced mock: fetch it first. Local IndexedDB entries still use their stored data. */
+ if(x.cloud&&x.url){
+   fetch(x.url).then(function(r){if(!r.ok)throw new Error('Download failed ('+r.status+')');return r.blob();})
+   .then(function(blob){showMockBlob(x,blob);})
+   .catch(function(e){alert('This mock test could not be opened online: '+(e&&e.message?e.message:String(e)));});
+   return;
+ }
+ var blob=uploadToBlob(x);
+ showMockBlob(x,blob);
+}
+
+function startUploadedMock(id){
+ state.selectedMockId=String(id);
+ var x=state.uploads.find(function(z){return String(z.id)===String(id)});
+ if(!x){alert('Mock test not found. Please press Sync Now and try again.');return;}
+ state.force=x.force||state.force;
+ var profile=state.profile||{};
+ var session={id:Date.now()+'_'+Math.random().toString(36).slice(2),name:(profile.name||'Student').trim(),studentNumber:profile.studentNumber||'',phone:profile.phone||'',force:state.force,testId:String(id),testType:'uploaded',testName:x.name||'Mock Test',startedAt:new Date().toISOString(),resultSaved:false};
+ state.testSession=session;
+ state.pendingStart=null;
+ openMockUpload(String(id));
+}
+window.startUploadedMock=startUploadedMock;
+
+
+function renderStudent(a){
+ var ps=state.pendingStart||{};
+ var title=ps.type==='uploaded'?'Start Mock Test':(ps.type==='pnCadet'?'Start PN Cadet Mock Test':'Start Practice Test');
+ a.innerHTML='<div class="card" style="max-width:560px;margin:20px auto">'+
+ '<button class="secondary" onclick="home()">← Back</button>'+
+ '<h2 style="text-align:center">'+title+'</h2>'+
+ '<p class="small" style="text-align:center">Enter your details first. After pressing the button, the test will start.</p>'+
+ '<label>Student Name<input id="testStudentName" placeholder="Full Name" autocomplete="name" value="'+esc((state.profile&&state.profile.name)||'')+'"></label>'+
+ '<label>CNIC<input id="testStudentCnic" placeholder="XXXXX-XXXXXXX-X" inputmode="numeric" value="'+esc((state.profile&&state.profile.cnic)||'')+'"></label>'+
+ '<label>Phone Number<input id="testStudentPhone" placeholder="03XXXXXXXXX" inputmode="tel" value="'+esc((state.profile&&state.profile.phone)||'')+'"></label>'+
+ '<label>Registration Number<input id="testStudentRegistration" placeholder="Registration Number" value="'+esc((state.profile&&state.profile.registration)||'')+'"></label>'+
+ '<button style="display:block;width:80%;margin:18px auto;font-size:18px;background:#f5cf55;color:#17352f" onclick="submitStudentDetailsAndStart()">Submit & Start Test</button>'+
+ '</div>';
+}
+window.startStudent=function(){state.pendingStart={type:'builtIn'};setPage('student')};
+window.startPNCadetMock=function(id){
+ var idx=PN_CADET_MOCKS.findIndex(function(x){return String(x.id)===String(id)});
+ var m=idx>=0?PN_CADET_MOCKS[idx]:null;
+ if(!m){alert('Mock Test not found.');return;}
+ state.force='pn';state.pendingStart={type:'pnCadet',id:m.id,name:'Mock Test '+(idx+1),mock:m};setPage('student');
+};
+window.submitStudentDetailsAndStart=function(){
+ var n=(document.getElementById('testStudentName').value||'').trim();
+ var cnic=(document.getElementById('testStudentCnic').value||'').trim();
+ var ph=(document.getElementById('testStudentPhone').value||'').trim();
+ var reg=(document.getElementById('testStudentRegistration').value||'').trim();
+ if(!n||!cnic||!ph||!reg){alert('Please enter Student Name, CNIC, Phone Number and Registration Number.');return;}
+ state.profile={name:n,cnic:cnic,studentNumber:reg,registration:reg,phone:ph};
+ state.student=state.profile;
+ try{localStorage.setItem('PF_STUDENT_PROFILE',JSON.stringify(state.profile))}catch(e){}
+ var ps=state.pendingStart||{type:'builtIn'};
+ var session={id:Date.now()+'_'+Math.random().toString(36).slice(2),name:n,cnic:cnic,studentNumber:reg,registration:reg,phone:ph,force:state.force,testId:ps.id||'',testType:ps.type||'builtIn',testName:ps.name||'Built-in Practice Test',startedAt:new Date().toISOString(),resultSaved:false};
+ state.testSession=session;
+ var starter=(ps.type==='pnCadet'?Promise.resolve(session):(window.PFCloudStartTest?window.PFCloudStartTest(session):Promise.resolve(session)));
+ Promise.resolve(starter).then(function(saved){
+   if(saved&&saved.id)session.id=saved.id;
+   state.pendingStart=null;
+   if(ps.type==='uploaded'){
+     openMockUpload(ps.id);
+   }else if(ps.type==='pnCadet'){
+     state.activeQuestions=ps.mock.questions||[];state.index=0;state.answers=[];state.pendingTest=null;setPage('question');
+   }else{
+     state.activeQuestions=questions;state.index=0;state.answers=[];state.pendingTest=null;setPage('question');
+   }
+ }).catch(function(e){alert('Could not start test online: '+(e&&e.message?e.message:String(e)));});
+};
+function getActiveQuestions(){return state.activeQuestions&&state.activeQuestions.length?state.activeQuestions:questions;}
+function renderQuestion(a){
+ var qs=getActiveQuestions(),q=qs[state.index],chosen=state.answers[state.index];
+ if(!q){state.index=0;render();return;}
+ var opts="";
+ q.o.forEach(function(text,i){
+  var cls="";
+  if(chosen!==undefined){if(i===q.a)cls="correct";else if(i===chosen)cls="wrong"}
+  opts+='<button class="option '+cls+'" '+(chosen!==undefined?"disabled":"")+' onclick="answer('+i+')">'+String.fromCharCode(65+i)+'. '+esc(text)+'</button>';
+ });
+ var next=chosen!==undefined?'<button onclick="nextQuestion()">'+(state.index===qs.length-1?'Submit Test':'Next')+'</button>':'';
+ a.innerHTML='<div class="card"><b>Question '+(state.index+1)+' / '+qs.length+'</b><h3>'+esc(q.q)+'</h3>'+opts+'<div><button class="secondary" onclick="previousQuestion()">Previous</button>'+next+'</div></div>';
+}
+window.answer=function(i){state.answers[state.index]=i;render()};
+window.previousQuestion=function(){if(state.index>0){state.index--;render()}};
+window.nextQuestion=function(){
+ var qs=getActiveQuestions();
+ if(state.index<qs.length-1){state.index++;render();return;}
+ var correct=0;qs.forEach(function(q,i){if(state.answers[i]===q.a)correct++});
+ var score=qs.length?Math.round(correct/qs.length*100):0;
+ var session=state.testSession;
+ if(!session){alert('Student session not found. Please start the test again.');return;}
+ var rr={id:session.id,name:session.name,cnic:session.cnic||'',registration:session.registration||session.studentNumber||'',studentNumber:session.registration||session.studentNumber||'',phone:session.phone||'',force:forces[state.force].name,score:score,correct:correct,total:qs.length,test_name:session.testName||'Mock Test',time:new Date().toISOString(),type:session.testType==='pnCadet'?'PN Cadet Mock Test':'Built-in Test'};
+ state.results=state.results.filter(function(r){return String(r.id)!==String(rr.id)});state.results.push(rr);
+ var savePromise=(session.testType==='pnCadet'&&window.PFCloudSaveResult)?window.PFCloudSaveResult(rr):(window.PFCloudUpdateTest?window.PFCloudUpdateTest(rr):window.saveResults());
+ Promise.resolve(savePromise).then(function(){state.testSession=null;state.pendingTestResult=rr;state.activeQuestions=null;setPage('result')}).catch(function(e){alert('Result save failed: '+e.message);});
+};
+window.submitPendingTest=function(){window.nextQuestion()};
+function renderResult(a){
+ var p=state.pendingTestResult;
+ if(p){
+   var correct=p.correct!=null?p.correct:null,total=p.total!=null?p.total:null;
+   a.innerHTML='<div class="card"><h2>✅ Test Result</h2><p><b>'+esc(p.name||'Student')+'</b></p><p>'+esc(p.force||'')+'</p><h3>'+esc(p.test_name||'Mock Test')+'</h3><div class="score">'+Number(p.score||0)+'%</div>'+(correct!=null&&total!=null?'<p style="text-align:center">'+correct+' / '+total+' Correct</p>':'<p style="text-align:center">Result saved successfully.</p>')+'<button onclick="tests()">Take Another Test</button><button class="secondary" onclick="home()">Home</button></div>';
+   return;
+ }
+ var correct=0;questions.forEach(function(q,i){if(state.answers[i]===q.a)correct++});
+ var score=Math.round(correct/questions.length*100);
+ a.innerHTML='<div class="card"><h2>Test Result</h2><p><b>'+esc((state.student||state.profile||{}).name||'Student')+'</b></p><p>'+esc((state.student||state.profile||{}).phone||'')+'</p><div class="score">'+score+'%</div><p style="text-align:center">'+correct+' / '+questions.length+' Correct</p><button onclick="tests()">Take Another Test</button><button class="secondary" onclick="home()">Home</button></div>';
+}
+loadProfile();
+loadPersistent();
+window.PF_STATE=state;
+window.PF_RENDER=render;
+})();
+</script>
+
+<script>
+/* ===== ONLINE SYNC — CONNECTED TO SUPABASE ===== */
+(function(){
+  var CLOUD={url:"https://ugcmnmycoimdthxxoeky.supabase.co",anonKey:"sb_publishable_Z0pFsH50CXZPi-w_HD6Aog_-jeUOCQO",bucket:"app-files"};
+  try{var saved=JSON.parse(localStorage.getItem("PF_CLOUD_CONFIG")||"null");if(saved&&saved.url&&saved.anonKey){CLOUD=Object.assign(CLOUD,saved);}}catch(e){}
+  function ready(){return /^https:\/\/[^\s]+$/.test(CLOUD.url||"") && !!CLOUD.anonKey;}
+  function hdr(extra){var h={apikey:CLOUD.anonKey};if(extra)Object.assign(h,extra);return h;}
+  function req(path,opt){opt=opt||{};opt.headers=Object.assign({},hdr(),opt.headers||{});return fetch(CLOUD.url.replace(/\/$/,"")+path,opt);}
+  function json(path,opt){return req(path,opt).then(function(r){return r.text().then(function(t){if(!r.ok)throw new Error(t||("HTTP "+r.status));if(!t||!t.trim())return null;try{return JSON.parse(t);}catch(e){return null;}});});}
+  function pub(path){return CLOUD.url.replace(/\/$/,"")+"/storage/v1/object/public/"+CLOUD.bucket+"/"+path.split("/").map(encodeURIComponent).join("/");}
+  function normalizeCloudUpload(x){
+    x=x||{};
+    x.cloud=true;
+    x.url=x.file_url||x.url||"";
+    var rawKind=String(x.file_type||x.kind||"").trim().toLowerCase();
+    var name=String(x.name||"").toLowerCase();
+    /* Accept all legacy spellings used by older admin builds. */
+    if(rawKind==="mock test"||rawKind==="mock_test"||rawKind==="mock"||rawKind==="quiz"||/\.(html?|json|txt)$/.test(name)) x.kind="Mock Test";
+    else if(rawKind==="pdf"||name.endsWith(".pdf")) x.kind="PDF";
+    else x.kind=x.file_type||x.kind||"PDF";
+    x.type=x.kind==="Mock Test"?(x.mime||"text/html"):(x.mime||"application/pdf");
+    var marker="/object/public/"+CLOUD.bucket+"/";
+    x._storagePath=(x.url&&x.url.indexOf(marker)>=0)?decodeURIComponent(x.url.split(marker)[1]):(x.storage_path||"");
+    /* Force is authoritative when present; otherwise derive it from the storage path. */
+    if(!x.force||!Object.prototype.hasOwnProperty.call(window.PF_FORCES||{},String(x.force))){
+      if(x._storagePath){
+        var first=x._storagePath.split("/")[0];
+        if(Object.prototype.hasOwnProperty.call(window.PF_FORCES||{},first)) x.force=first;
+      }
+    }
+    if(x.force==="navy") x.force="navycs";
+    return x;
+  }
+  /* ===== LIVE MOCK/PDF UPLOAD BROADCAST =====
+     Uses Supabase Realtime Broadcast so every currently-open installed app
+     can refresh the shared app_files table immediately after an admin upload.
+     The existing 30-second polling remains as a fallback. */
+  var PF_LIVE_CHANNEL=null, PF_LIVE_READY=false, PF_LIVE_RETRY=null;
+  function liveRealtimeUrl(){
+    try{return CLOUD.url.replace(/^https:\/\//,'wss://').replace(/\/$/,'')+'/realtime/v1/websocket?apikey='+encodeURIComponent(CLOUD.anonKey)+'&vsn=1.0.0';}
+    catch(e){return '';}
+  }
+  function liveConnect(){
+    if(!ready()||typeof WebSocket==='undefined')return;
+    try{
+      if(PF_LIVE_CHANNEL && (PF_LIVE_CHANNEL.readyState===0||PF_LIVE_CHANNEL.readyState===1))return;
+      var ws=new WebSocket(liveRealtimeUrl()); PF_LIVE_CHANNEL=ws;
+      ws.onopen=function(){
+        PF_LIVE_READY=true;
+        ws.send(JSON.stringify({topic:'realtime:app-files-live',event:'phx_join',payload:{config:{broadcast:{self:true}}},ref:'1'}));
+      };
+      ws.onmessage=function(ev){
+        try{
+          var m=JSON.parse(ev.data||'{}');
+          if(m.event==='broadcast' && m.payload && m.payload.payload && m.payload.payload.type==='APP_FILE_CHANGED'){
+            syncUploads().catch(function(e){console.warn('Live upload sync failed',e);});
+          }
+        }catch(e){}
+      };
+      ws.onclose=function(){PF_LIVE_READY=false;PF_LIVE_CHANNEL=null;clearTimeout(PF_LIVE_RETRY);PF_LIVE_RETRY=setTimeout(liveConnect,5000);};
+      ws.onerror=function(){};
+    }catch(e){PF_LIVE_READY=false;}
+  }
+  function liveBroadcast(change){
+    if(!PF_LIVE_CHANNEL || PF_LIVE_CHANNEL.readyState!==1)return false;
+    try{
+      PF_LIVE_CHANNEL.send(JSON.stringify({topic:'realtime:app-files-live',event:'broadcast',payload:{type:'broadcast',event:'APP_FILE_CHANGED',payload:change||{}} ,ref:String(Date.now())}));
+      return true;
+    }catch(e){return false;}
+  }
+  function liveStart(){liveConnect();}
+  function syncUploads(){
+    if(!ready())return Promise.resolve(false);
+    return json("/rest/v1/app_files?select=*&order=created_at.desc").then(function(rows){
+      window.PF_STATE.uploads=(rows||[]).filter(function(x){return x&&x.active!==false;}).map(normalizeCloudUpload);
+      /* Keep the currently selected category visible immediately after sync. */
+      window.PF_RENDER();return true;
+    });
+  }
+  function syncResults(){
+    if(!ready())return Promise.resolve(false);
+    var localResults=(window.PF_STATE&&window.PF_STATE.results)||[];
+    return json("/rest/v1/test_results?select=*&order=time.desc").then(function(rows){
+      rows=rows||[];
+      var now=Date.now(),cut=now-(24*60*60*1000),byId={},remoteFresh=[],expired=[];
+      rows.forEach(function(r){
+        var t=Date.parse(r.time||r.created_at||'');
+        if(t&&t<cut){expired.push(r);return;}
+        if(t&&t>=cut){var localMatch=(localResults||[]).find(function(l){return String(l.id)===String(r.id)});if(localMatch){r.cnic=r.cnic||localMatch.cnic||'';r.registration=r.registration||localMatch.registration||localMatch.studentNumber||'';r.studentNumber=r.studentNumber||localMatch.studentNumber||localMatch.registration||'';}byId[String(r.id)]=r;remoteFresh.push(r);}
+      });
+      var localFresh=[];
+      localResults.forEach(function(r){
+        var t=Date.parse(r.time||r.created_at||'');
+        if(t&&t>=cut){
+          localFresh.push(r);
+          if(!byId[String(r.id)]){byId[String(r.id)]=r;}
+        }
+      });
+      var merged=Object.keys(byId).map(function(k){return byId[k]});
+      merged.sort(function(a,b){return (Date.parse(b.time||b.created_at||'')||0)-(Date.parse(a.time||a.created_at||'')||0);});
+      var cleanup=expired.map(function(r){return json('/rest/v1/test_results?id=eq.'+encodeURIComponent(String(r.id)),{method:'DELETE',headers:{'Prefer':'return=minimal'}}).catch(function(){return null;});});
+      return Promise.all(cleanup).then(function(){
+        window.PF_STATE.results=merged;
+        try{localStorage.setItem('PF_RESULTS',JSON.stringify(merged));}catch(e){}
+        return saveLocalResultsOnly(merged).then(function(){window.PF_RENDER();return true;});
+      });
+    }).catch(function(err){
+      var now=Date.now(),cut=now-(24*60*60*1000);
+      window.PF_STATE.results=(localResults||[]).filter(function(r){var t=Date.parse(r.time||r.created_at||'');return t&&t>=cut;});
+      try{localStorage.setItem('PF_RESULTS',JSON.stringify(window.PF_STATE.results));}catch(e){}
+      window.PF_RENDER();
+      return false;
+    });
+  }
+  function saveLocalResultsOnly(results){
+    return idbClear('results').then(function(){
+      return Promise.all((results||[]).map(function(r){return idbPut('results',r);}));
+    }).catch(function(){return true;});
+  }
+  function projectRefFromUrl(){
+    try{var u=new URL(CLOUD.url);return u.hostname.split('.')[0];}catch(e){return '';}
+  }
+  function tusMeta(obj){
+    return Object.keys(obj).map(function(k){return k+' '+btoa(unescape(encodeURIComponent(String(obj[k]))));}).join(',');
+  }
+  function tusUploadLarge(file,path,onProgress){
+    var ref=projectRefFromUrl();
+    if(!ref) return Promise.reject(new Error('Invalid Supabase Project URL'));
+    var endpoint='https://'+ref+'.storage.supabase.co/storage/v1/upload/resumable';
+    var meta=tusMeta({bucketName:CLOUD.bucket,objectName:path,contentType:file.type||'application/octet-stream',cacheControl:'3600'});
+    return fetch(endpoint,{method:'POST',headers:{'apikey':CLOUD.anonKey,'Tus-Resumable':'1.0.0','Upload-Length':String(file.size),'Upload-Metadata':meta,'x-upsert':'true'}})
+      .then(function(r){
+        if(!r.ok)return r.text().then(function(t){throw new Error('Resumable upload start failed ('+r.status+'): '+t)});
+        var loc=r.headers.get('Location');
+        if(!loc)throw new Error('Resumable upload did not return an upload URL.');
+        return loc;
+      }).then(function(loc){
+        var url=loc;
+        if(url.indexOf('http')!==0)url='https://'+ref+'.storage.supabase.co'+url;
+        var offset=0,chunkSize=6*1024*1024;
+        function sendNext(){
+          if(offset>=file.size){if(onProgress)onProgress(file.size,file.size);return Promise.resolve();}
+          var end=Math.min(offset+chunkSize,file.size),chunk=file.slice(offset,end);
+          return fetch(url,{method:'PATCH',headers:{'apikey':CLOUD.anonKey,'Tus-Resumable':'1.0.0','Upload-Offset':String(offset),'Content-Type':'application/offset+octet-stream'},body:chunk})
+            .then(function(r){
+              if(!r.ok)return r.text().then(function(t){throw new Error('Resumable upload failed ('+r.status+'): '+t)});
+              var h=r.headers.get('Upload-Offset');
+              offset=h!==null?Number(h):end;
+              if(onProgress)onProgress(offset,file.size);
+              return sendNext();
+            });
+        }
+        return sendNext();
+      });
+  }
+  function cloudUpload(inputId,kind){
+    var input=document.getElementById(inputId),file=input&&input.files?input.files[0]:null;
+    if(!file){alert('Please select a file first.');return;}
+    if(!ready()){alert('Online Sync is not configured.');return;}
+    var forceEl=document.getElementById('adminCat'),force=forceEl?forceEl.value:'general';
+    var id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+    var safeName=(file.name||'file').replace(/[^a-zA-Z0-9._-]/g,'_');
+    var path=force+'/'+id+'_'+safeName;
+    var base=CLOUD.url.replace(/\/$/,'');
+    var endpoint=base+'/storage/v1/object/'+CLOUD.bucket+'/'+path.split('/').map(encodeURIComponent).join('/');
+    var uploadPromise;
+    var useResumable=file.size>6*1024*1024;
+    alert((kind==='PDF'?'PDF':'Mock Test')+' upload ho raha hai... '+(useResumable?'large file hai, chunks mein upload hoga.':'thora wait karein.'));
+    if(useResumable){
+      uploadPromise=tusUploadLarge(file,path,function(done,total){
+        var pct=total?Math.round(done/total*100):0;
+        document.title='Uploading '+pct+'%';
+      });
+    }else{
+      uploadPromise=fetch(endpoint,{method:'POST',headers:{'apikey':CLOUD.anonKey,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file}).then(function(r){
+        return r.text().then(function(t){if(!r.ok)throw new Error('Storage HTTP '+r.status+(t?': '+t:''));return t;});
+      });
+    }
+    uploadPromise.then(function(){
+      document.title='Pak Forces Preparation';
+      var publicUrl=pub(path);
+      var payload={id:String(id),name:String(file.name),file_type:String(kind),file_url:publicUrl,created_at:new Date().toISOString(),active:true,force:String(force)};
+      return json('/rest/v1/app_files',{method:'POST',headers:{'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)}).then(function(){
+        /* Tell every currently-open installed app to re-read the shared cloud library immediately. */
+        liveBroadcast({id:String(id),kind:String(kind),force:String(force),created_at:payload.created_at});
+        input.value='';
+        /* Immediately re-read the shared table. This is the same source every installed student app syncs from. */
+        return syncUploads().then(function(ok){
+          if(!ok)throw new Error('Online library verification failed.');
+          var found=(window.PF_STATE.uploads||[]).some(function(z){return String(z.id)===String(id);});
+          if(!found)throw new Error('Mock Test was uploaded but is not visible in the shared online library.');
+          alert((kind==='PDF'?'PDF':'Mock Test')+' successfully uploaded online for all installed apps.');
+          return true;
+        });
+      });
+    }).catch(function(e){
+      document.title='Pak Forces Preparation';
+      alert((kind==='PDF'?'PDF':'Mock Test')+' upload failed:\n'+(e&&e.message?e.message:String(e)));
+      console.error(e);
+    });
+  }
+
+  function storagePathFor(x){
+    var p=x&&(x._storagePath||x.storage_path);
+    if(!p&&x&&x.file_url){var marker="/object/public/"+CLOUD.bucket+"/";if(x.file_url.indexOf(marker)>=0)p=decodeURIComponent(x.file_url.split(marker)[1]);}
+    return p||"";
+  }
+  function cloudDelete(id){
+    if(!ready()){alert("Online Sync is not configured.");return;}
+    var x=window.PF_STATE.uploads.find(function(z){return String(z.id)===String(id)}),p=storagePathFor(x);
+    if(!x){alert("File record was not found in the current synced list. Sync first.");return;}
+    if(!p){alert("Storage path is missing; nothing was deleted.");return;}
+    /* Delete the object first. Keep the database row if storage deletion fails. */
+    req("/storage/v1/object/"+CLOUD.bucket,{method:"DELETE",headers:hdr({"Content-Type":"application/json"}),body:JSON.stringify([p])})
+    .then(function(sr){if(!sr.ok)return sr.text().then(function(t){throw new Error("Storage delete failed (HTTP "+sr.status+"): "+t)});
+      return req("/rest/v1/app_files?id=eq."+encodeURIComponent(id),{method:"DELETE"}).then(function(r){if(!r.ok)throw new Error("Storage file removed, but database row delete failed (HTTP "+r.status+"). Sync and clean the stale row.");return true;});
+    })
+    .then(function(){alert("Deleted online for all users.");return syncUploads();})
+    .catch(function(e){alert("Delete failed: "+e.message);});
+  }
+  function cloudDeleteAllPdfs(){
+    if(!ready()){alert("Online Sync is not configured.");return;}
+    var pdfs=(window.PF_STATE.uploads||[]).filter(function(x){
+      var k=String(x.kind||x.file_type||"").toLowerCase(),n=String(x.name||"").toLowerCase();
+      return k==="pdf"||n.endsWith(".pdf");
+    });
+    if(!pdfs.length){alert("No PDFs are listed in the synced app_files library. Mock Tests and results were not changed.");return;}
+    var msg="This will permanently delete "+pdfs.length+" PDF file(s) from the app-files bucket and remove their app_files records for ALL students. Mock Tests and student results will be kept. This cannot be undone. Continue?";
+    if(!confirm(msg))return;
+    var done=0;
+    function next(i){
+      if(i>=pdfs.length){return syncUploads().then(function(){alert("Finished: "+done+" PDF(s) deleted. Mock Tests and student results were not targeted.");});}
+      var x=pdfs[i],path=storagePathFor(x);
+      if(!path)throw new Error("Stopped before deleting "+(x.name||x.id)+": Storage path is missing. No database row was removed for this file.");
+      return req("/storage/v1/object/"+CLOUD.bucket,{method:"DELETE",headers:hdr({"Content-Type":"application/json"}),body:JSON.stringify([path])})
+        .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error("Storage delete failed for "+(x.name||x.id)+" (HTTP "+r.status+"): "+t)});
+          return req("/rest/v1/app_files?id=eq."+encodeURIComponent(String(x.id)),{method:"DELETE"}).then(function(db){if(!db.ok)throw new Error("PDF object deleted, but its database row could not be removed (HTTP "+db.status+").");done++;return next(i+1);});
+        });
+    }
+    next(0).catch(function(e){syncUploads().finally(function(){alert("Stopped after deleting "+done+" PDF(s). Remaining files were not processed. Error: "+e.message);});});
+  }
+  function saveTestStartOnline(session){
+    if(!ready())return Promise.resolve(session);
+    /* Start row intentionally stores only name + phone + test metadata.
+       Do not send legacy student-number/CNIC fields because the live test_results
+       schema may not contain them. The final score is patched into this same row. */
+    var payload={id:String(session.id),name:String(session.name||'Student'),phone:String(session.phone||''),force:String((window.PF_FORCES[session.force]||{}).name||session.force||''),score:null,test_name:String(session.testName||'Test'),time:session.startedAt||new Date().toISOString(),type:'Started Test'};
+    return json('/rest/v1/test_results',{method:'POST',headers:{'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)}).then(function(){return syncResults().then(function(){return session;});});
+  }
+  function updateTestOnline(result){
+    if(!ready())return saveResults();
+    var payload={name:String(result.name||'Student'),phone:String(result.phone||''),force:String(result.force||''),score:result.score==null?null:Number(result.score),test_name:String(result.test_name||'Test'),time:result.time||new Date().toISOString(),type:String(result.type||'Test')};
+    return json('/rest/v1/test_results?id=eq.'+encodeURIComponent(String(result.id)),{method:'PATCH',headers:{'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)}).then(function(){return syncResults();});
+  }
+  function saveResultOnline(result){
+    if(!ready())return saveResults();
+    var payload={id:String(result.id),name:String(result.name||"Student"),phone:String(result.phone||""),force:String(result.force||""),score:result.score==null?null:Number(result.score),test_name:String(result.test_name||result.mockName||"Test"),time:result.time||new Date().toISOString(),type:String(result.type||"Test")};
+    return json("/rest/v1/test_results",{method:"POST",headers:{"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(payload)}).then(function(){return syncResults();});
+  }
+  window.uploadSelected=function(inputId,kind){if(ready())cloudUpload(inputId,kind);else alert("Online Sync is not configured.");};
+  window.deleteUpload=function(id){if(!confirm("Delete this file for ALL users?"))return;if(ready())cloudDelete(id);else alert("Online Sync is not configured.");};
+  var oldOpen=window.openUpload;
+  window.openUpload=function(id){
+    var x=window.PF_STATE.uploads.find(function(z){return String(z.id)===String(id)});
+    if(x&&x.cloud&&x.url){
+      var quickKind=String(x.kind||x.file_type||'').toLowerCase();
+      var quickName=String(x.name||'').toLowerCase();
+      /* PDFs open immediately from the public URL. Do NOT download the whole file first. */
+      if(quickKind==='pdf'||quickName.endsWith('.pdf')){
+        window.openPdfUrl(x,x.url);
+        return;
+      }
+      fetch(x.url).then(function(r){if(!r.ok)throw new Error("Download failed ("+r.status+")");return r.blob();}).then(function(blob){
+        var kind=String(x.kind||x.file_type||'').toLowerCase();
+        var name=String(x.name||'').toLowerCase();
+        var mime=String(blob.type||x.mime||'').toLowerCase();
+        if(kind==='mock test'){
+          if(mime==='application/pdf'||name.endsWith('.pdf')){
+            window.openMockUpload(id,blob);
+            return;
+          }
+          /* WebView-safe HTML/text mock opening: use srcdoc instead of blob: iframe URLs. */
+          var fr=new FileReader();
+          fr.onload=function(){
+            var text=String(fr.result||'');
+            var v=document.getElementById('viewer');
+            var wrap=document.getElementById('pdfPages');
+            document.getElementById('viewerTitle').textContent=x.name;
+            v.style.display='block'; v.dataset.mode='mock'; v.dataset.mockId=String(id); v.dataset.pdfZoom='1';
+            document.getElementById('pdfZoomOut').style.display='none';document.getElementById('pdfZoomReset').style.display='none';document.getElementById('pdfZoomIn').style.display='none';
+            document.getElementById('pdfStatus').textContent='Mock Test — complete the test, then press Submit Test below';
+            wrap.innerHTML='';
+            var frame=document.createElement('iframe'); frame.id='mockFrame';
+            frame.style.cssText='width:100%;height:calc(100vh - 100px);border:0;background:#fff;display:block;';
+            frame.setAttribute('allow','fullscreen'); wrap.appendChild(frame);
+            v.dataset.url='';
+            var lower=text.trim().toLowerCase();
+            if(!/^<!doctype|<html/i.test(text)){text='<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><pre style="white-space:pre-wrap;font:16px Arial">'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre></body></html>';}
+            var baseHref='';
+            try{baseHref=x.url?x.url.substring(0,x.url.lastIndexOf('/')+1):'';}catch(e){}
+            var bridge='<script>(function(){function send(){var t=document.body?document.body.innerText||document.body.textContent||"":"";var m=t.match(/(?:score|marks|result)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*%/i)||t.match(/(\d+(?:\.\d+)?)\s*%/);if(m)parent.postMessage({type:"PF_MOCK_RESULT",score:Number(m[1]),test_name:document.title},"*");}window.addEventListener("load",send);new MutationObserver(send).observe(document.documentElement,{subtree:true,childList:true,characterData:true});window.PF_REPORT_RESULT=function(score,correct,total){parent.postMessage({type:"PF_MOCK_RESULT",score:Number(score),correct:correct,total:total,test_name:document.title},"*")};})();<\/script>';
+            if(baseHref)text=text.replace(/<head([^>]*)>/i,'<head$1><base href="'+baseHref.replace(/"/g,'&quot;')+'">');
+            text=text.replace(/<\/body>/i,bridge+'</body>');
+            frame.srcdoc=text; watchMockCompletion(frame);
+          };
+          fr.readAsText(blob);
+          return;
+        }
+        if(mime==='application/pdf'||name.endsWith('.pdf')) window.openPdfUrl(x,x.url);
+        else window.openPdfBlob(x,blob);
+      }).catch(function(e){
+        var kind2=String(x.kind||x.file_type||'').toLowerCase();var name2=String(x.name||'').toLowerCase();
+        if(kind2==='pdf'||name2.endsWith('.pdf')) window.openPdfUrl(x,x.url);
+        else alert("Could not open online file: "+e.message);
+      });
+      return;
+    }
+    return oldOpen(id);
+  };
+  var oldAdmin=window.renderAdmin;
+  if(typeof oldAdmin==='function'){
+    window.renderAdmin=function(a){oldAdmin(a);var card=document.createElement('div');card.className='card';card.innerHTML='<h3>☁️ Online Sync</h3><p class="small">Connected library: app-files</p><button id="cloudSyncBtn">Sync Now</button><hr><h3>PDF Storage Cleanup</h3><p class="small">This removes only items identified as PDFs from the synced app_files list and their matching objects in Storage. Mock Tests and student results are not targeted. Use only after backing up anything you may need.</p><button id="deleteAllPdfsBtn" class="danger">Delete all listed PDFs from cloud</button>';a.insertBefore(card,a.firstChild);document.getElementById('cloudSyncBtn').onclick=function(){Promise.all([syncUploads(),syncResults()]).then(function(){alert('Sync complete.');}).catch(function(e){alert('Sync failed: '+e.message);});};document.getElementById('deleteAllPdfsBtn').onclick=cloudDeleteAllPdfs;};
+  }
+  window.saveCloudSettings=function(){alert("This version is already connected to the Supabase project.");};
+  var oldSaveResults=window.saveResults;
+  window.saveResults=function(){return ready()?syncResults():oldSaveResults();};
+  setTimeout(function(){if(ready()){syncUploads().catch(function(e){console.warn(e)});syncResults().catch(function(e){console.warn(e)});liveStart();}},800);
+  setInterval(function(){if(ready()&&document.visibilityState!=='hidden'){syncUploads().catch(function(e){console.warn(e)});syncResults().catch(function(e){console.warn(e)});liveConnect();}},30000);
+  window.PF_CLOUD={ready:ready,saveResult:saveResultOnline,syncUploads:syncUploads,syncResults:syncResults};window.PFCloudSaveResult=saveResultOnline;window.PFCloudStartTest=saveTestStartOnline;window.PFCloudUpdateTest=updateTestOnline;
+})();
+</script>
+</body>
+</html>
